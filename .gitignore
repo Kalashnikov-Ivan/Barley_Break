@@ -1,0 +1,10 @@
+# игнорировать все файлы в каталогах /
+pro/
+.vscode/
+
+# Ignoring all obj files in all catalogsсистемные требования
+**/*.o
+# Ignoring all executable files in all catalogs
+**/*.x
+**/*.elf
+**/*.code-workspace
