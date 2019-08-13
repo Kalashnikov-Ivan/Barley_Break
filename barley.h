@@ -5,7 +5,7 @@
 //-----------------Types-------------------
 typedef enum CONTROL_KEYBOARD
 { 
-    UP = 72, DOWN = 80, LEFT = 75, RIGHT = 77, EXIT = 113, RESTART = 114
+    UP = 'w', DOWN = 's', LEFT = 'a', RIGHT = 'd', EXIT = 113, RESTART = 114
 } KEYBOARD;
 
 typedef struct 
@@ -26,7 +26,11 @@ void free_field
     (barley_field_t * restrict field);
 
 void print_field
-	(barley_field_t * restrict field);
+	(const barley_field_t * restrict field);
+
+void barley_move
+    (barley_field_t * restrict field,
+     const KEYBOARD dir);
 
 
 //----------Support------------

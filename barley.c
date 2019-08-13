@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <stddef.h> //For size_t, ptrdiff_t and so on...
 #include <stdint.h> //For uint8_t and so on...
@@ -116,7 +117,7 @@ void free_field
 }
 
 void print_field
-	(barley_field_t * restrict field)
+	(const barley_field_t * restrict field)
 {
 	for (size_t row = 0; row < field->size_y; row++)
 	{
@@ -146,6 +147,44 @@ void print_field
 				printf(" ---  ");
 		}
 		printf("\n");
+	}
+}
+
+void barley_move
+    (barley_field_t * restrict field,
+     const KEYBOARD dir)
+{
+	if (dir == UP && field->position_y != field->size_y - 1)
+	{
+		field->barley[field->position_y][field->position_x] = field->barley[field->position_y + 1][field->position_x];
+
+		field->position_y += 1;
+
+		field->barley[field->position_y][field->position_x] = 0;
+	}
+	if (dir == DOWN && field->position_y != 0)
+	{
+		field->barley[field->position_y][field->position_x] = field->barley[field->position_y - 1][field->position_x];
+
+		field->position_y -= 1;
+
+		field->barley[field->position_y][field->position_x] = 0;
+	}
+	if (dir == LEFT && field->position_x != field->size_x- 1)
+	{
+		field->barley[field->position_y][field->position_x] = field->barley[field->position_y][field->position_x + 1];
+
+		field->position_x += 1;
+
+		field->barley[field->position_y][field->position_x] = 0;
+	}
+	if (dir == RIGHT && field->position_x != 0)
+	{
+		field->barley[field->position_y][field->position_x] = field->barley[field->position_y][field->position_x - 1];
+
+		field->position_x -= 1;
+
+		field->barley[field->position_y][field->position_x] = 0;
 	}
 }
 
