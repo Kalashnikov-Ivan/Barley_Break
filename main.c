@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <ncursesw/ncurses.h>
+#include <ncurses.h>
 
 #include "barley.h"
 
