@@ -124,29 +124,31 @@ void print_field
 		for (size_t col = 0; col < field->size_x; col++) //Print top of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf(" ---  ");
+				printw(" ---  ");
 		}
-		printf("\n");
+		printw("\n");
 
 		for (size_t col = 0; col < field->size_x; col++) //Print middle of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf("| %-2d| ", field->barley[row][col]);
+				printw("| %-2d| ", field->barley[row][col]);
 		}
-		printf("\n");
+		printw("\n");
 
 		for (size_t col = 0; col < field->size_x; col++) //Print bottom of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf(" ---  ");
+				printw(" ---  ");
 		}
-		printf("\n");
+		printw("\n");
+
+		refresh();
 	}
 }
 
