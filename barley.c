@@ -6,6 +6,8 @@
 #include <stdint.h> //For uint8_t and so on...
 #include <stdbool.h>
 
+#include <ncurses.h>
+
 #include "barley.h"
 
 barley_field_t* init_field
@@ -68,19 +70,28 @@ barley_field_t* init_field
 		}
 	}
 
+	//Init first position
+	result_field->position_x = size_x - 1;
+	result_field->position_y = size_y - 1;
+
+	//Emptying initial position
+	result_field->barley[result_field->position_y][result_field->position_x] = 0;
+
 	//For missimg always losing situation
 	uint16_t chaos = 0; //Quantity of chaos in field
 	for (size_t row = 0; row < size_y; row++)
 	{
 		for (size_t col = 0; col < size_x; col++)
 		{
-			for (size_t i = 0; i < size_y; i++)
+			for (size_t i = row; i < size_y; i++)
 			{
-				for (size_t j = col + 1; j < size_x; j++)
+				if ((row == size_y - 1) && (col > size_x - 2))
+					break;
+				for (size_t j = col; j < size_x; j++)
 				{
-					//to avoid looping in the case of the last empty cell 
-					if (((row == size_y - 1) && (j > size_x - 1)))
+					if ((row == size_y - 1) && (j > size_x - 1))
 						break;
+					//to avoid looping in the case of the last empty cell 
 					if (result_field->barley[row][col] > result_field->barley[i][j])
 						chaos++;
 				}
@@ -88,19 +99,12 @@ barley_field_t* init_field
 		}
 	}
 
-	if (chaos % 2) //If total amount is odd, swap 14 and 15 position (4x4)
+	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
 	{
 		int16_t tmp = result_field->barley[size_y - 1][size_x - 3];
 		result_field->barley[size_y - 1][size_x - 3] = result_field->barley[size_y - 1][size_x - 2];
 		result_field->barley[size_y - 1][size_x - 2] = tmp;
 	}
-
-	//Init first position
-	result_field->position_x = size_x - 1;
-	result_field->position_y = size_y - 1;
-
-	//Emptying initial position
-	result_field->barley[result_field->position_y][result_field->position_x] = 0;
 
 	return result_field;
 }
@@ -124,33 +128,35 @@ void print_field
 		for (size_t col = 0; col < field->size_x; col++) //Print top of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf(" ---  ");
+				printw(" ---  ");
 		}
-		printf("\n");
+		printw("\n");
 
 		for (size_t col = 0; col < field->size_x; col++) //Print middle of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf("| %-2d| ", field->barley[row][col]);
+				printw("| %-2d| ", field->barley[row][col]);
 		}
-		printf("\n");
+		printw("\n");
 
 		for (size_t col = 0; col < field->size_x; col++) //Print bottom of cell
 		{
 			if (field->barley[row][col] == 0)
-				printf("      ");
+				printw("      ");
 			else
-				printf(" ---  ");
+				printw(" ---  ");
 		}
-		printf("\n");
+		printw("\n");
+
+		refresh();
 	}
 }
 
-void barley_move
+bool barley_move
     (barley_field_t * restrict field,
      const KEYBOARD dir)
 {
@@ -161,6 +167,8 @@ void barley_move
 		field->position_y += 1;
 
 		field->barley[field->position_y][field->position_x] = 0;
+
+		return true;
 	}
 	if (dir == DOWN && field->position_y != 0)
 	{
@@ -169,6 +177,8 @@ void barley_move
 		field->position_y -= 1;
 
 		field->barley[field->position_y][field->position_x] = 0;
+
+		return true;
 	}
 	if (dir == LEFT && field->position_x != field->size_x- 1)
 	{
@@ -177,6 +187,8 @@ void barley_move
 		field->position_x += 1;
 
 		field->barley[field->position_y][field->position_x] = 0;
+
+		return true;
 	}
 	if (dir == RIGHT && field->position_x != 0)
 	{
@@ -185,7 +197,28 @@ void barley_move
 		field->position_x -= 1;
 
 		field->barley[field->position_y][field->position_x] = 0;
+
+		return true;
 	}
+
+	return false;
+}
+
+
+bool check_win
+	(const barley_field_t * restrict field)
+{
+	uint16_t control = 1;
+	for (size_t i = 0; i < field->size_y; i++)
+	{
+		for (size_t j = 0; j < field->size_x; j++)
+		{
+			if (field->barley[i][j] != control % (field->size_y * field->size_x))
+				return false;
+			control++;
+		}
+	}
+	return true;
 }
 
 //----------Support------------
@@ -194,4 +227,66 @@ int32_t get_rand_in_range
      const int32_t max)
 {
    return (min + rand() % (min - (max + 1)));
+}
+
+void print_welcome()
+{
+	start_color();
+
+	init_pair (1, COLOR_RED, COLOR_BLACK);
+	init_pair (2, COLOR_GREEN, COLOR_BLACK);
+
+	attron(A_BOLD);
+	attron(COLOR_PAIR(1));
+	printw("Welcome to the Barley Break game!\n\n");
+	attroff(A_BOLD);
+	attroff(COLOR_PAIR(1));
+
+	printw("To control, use the arrows on the keyboard: UP, DOWN, LEFT, RIGHT\n");
+	printw("Additional keys:\n 'r' - restart\n 'q' - exit\n");
+
+	printw("\nThe goal of the game is to arrange all cells in ascending order as few moves as possible.\n");
+
+	attron(A_BOLD);
+	attron(COLOR_PAIR(2));
+	printw("\nGood luck!\n");
+	attroff(A_BOLD);
+	attroff(COLOR_PAIR(2));
+
+	refresh();
+}
+
+void print_instruction()
+{
+	printw("\nUse the arrows on keyboard for control: UP, DOWN, LEFT, RIGHT\n");
+	printw("Press 'q' for exit\nPress 'r' for restart\n");
+
+	refresh();
+}
+
+void print_win
+    (const uint32_t moves)
+{
+	start_color();
+
+	init_pair (1, COLOR_RED, COLOR_BLACK);
+	init_pair (2, COLOR_GREEN, COLOR_BLACK);
+
+	attron(A_BOLD);
+	attron(COLOR_PAIR(1));
+	printw("\nCongratulations!!! You win!");
+	attroff(A_BOLD);
+	attroff(COLOR_PAIR(1));
+
+	printw("\nUsing ");
+	attron(A_BOLD);
+	attron(COLOR_PAIR(2));
+	printw("%d ", moves);
+	attroff(A_BOLD);
+	attroff(COLOR_PAIR(2));
+
+	printw("moves!\n", moves);
+
+
+	refresh();
 }
