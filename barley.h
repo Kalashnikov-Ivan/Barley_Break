@@ -5,7 +5,7 @@
 //-----------------Types-------------------
 typedef enum CONTROL_KEYBOARD
 { 
-    UP = 'w', DOWN = 's', LEFT = 'a', RIGHT = 'd', EXIT = 113, RESTART = 114
+    UP = KEY_UP, DOWN = KEY_DOWN, LEFT = KEY_LEFT, RIGHT = KEY_RIGHT, EXIT = 'q', RESTART = 'r'
 } KEYBOARD;
 
 typedef struct 
@@ -28,27 +28,19 @@ void free_field
 void print_field
 	(const barley_field_t * restrict field);
 
-void barley_move
+bool barley_move
     (barley_field_t * restrict field,
      const KEYBOARD dir);
 
+bool check_win
+	(const barley_field_t * restrict field);
 
 //----------Support------------
 int32_t get_rand_in_range
     (const int32_t min, 
      const int32_t max);
 
-//----------Field------------
-
-/*void print_instructions
-    (void);
-
-//Initialization of field
-void initField(int *barley, int lines, int columns, int *posX, int *posY);
-
-//Logic functions
-void move(int *barley, int lines, int columns, DIR dir, int *posX, int *posY, int *movesCount);
-bool boolCheckWin(int *barley, int lines, int columns);
-
-//Support function
-int safeInputNum(int min, int max);*/
+void print_welcome();
+void print_instruction();
+void print_win
+    (const uint32_t moves);
