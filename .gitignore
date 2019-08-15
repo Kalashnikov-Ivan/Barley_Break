@@ -6,5 +6,5 @@ pro/
 **/*.o
 # Ignoring all executable files in all catalogs
 **/*.x
-#**/*.elf
+**/*.elf
 **/*.code-workspace
