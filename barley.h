@@ -1,4 +1,6 @@
-#ifndef stdint.h
+#pragma once
+
+#ifndef _GCC_WRAP_STDINT_H
 	#include <stdint.h> //For uint8_t and so on...
 #endif
 
