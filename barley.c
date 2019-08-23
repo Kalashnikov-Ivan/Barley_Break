@@ -42,33 +42,36 @@ barley_field_t* init_field
     //Array of flags occupied nums
 	bool * restrict free_num = (bool*)malloc(sizeof(bool) * (square - 1)); //"-1" for one free cell
 
-	for (size_t i = 0; i < square; i++) //Init this array
-		free_num[i] = true;
-
-
-	int rand_num = 0;
-    bool is_correct_num;
-
-	for (size_t row = 0; row < size_y; row++)
+	do 
 	{
-		for (size_t	col = 0; col < size_x; col++) //traversing a mult array as a one
+		for (size_t i = 0; i < square; i++) //Init this array
+			free_num[i] = true;
+
+
+		int rand_num = 0;
+		bool is_correct_num;
+
+		for (size_t row = 0; row < size_y; row++)
 		{
-			is_correct_num = false;
-			while (!is_correct_num) //Loop of checking correct (not repeating) num
+			for (size_t	col = 0; col < size_x; col++) //traversing a mult array as a one
 			{
-				rand_num = get_rand_in_range(1, square - 1);
-				if (free_num[rand_num - 1]) //"-1" for taking into account index numeration
-					is_correct_num = true;
+				is_correct_num = false;
+				while (!is_correct_num) //Loop of checking correct (not repeating) num
+				{
+					rand_num = get_rand_in_range(1, square - 1);
+					if (free_num[rand_num - 1]) //"-1" for taking into account index numeration
+						is_correct_num = true;
+				}
+
+				result_field->barley[row][col] = rand_num; //Put correct rand num in barley array
+				free_num[rand_num - 1] = false; //Set current num flag - occupied
+
+				//to avoid looping in the case of the last empty cell 
+				if (((row == size_y - 1) && (col == size_x - 2)))
+					break;
 			}
-
-			result_field->barley[row][col] = rand_num; //Put correct rand num in barley array
-			free_num[rand_num - 1] = false; //Set current num flag - occupied
-
-			//to avoid looping in the case of the last empty cell 
-			if (((row == size_y - 1) && (col == size_x - 2)))
-				break;
 		}
-	}
+	} while(check_chaos(result_field));
 
 	//Init first position
 	result_field->position_x = size_x - 1;
@@ -76,35 +79,6 @@ barley_field_t* init_field
 
 	//Emptying initial position
 	result_field->barley[result_field->position_y][result_field->position_x] = 0;
-
-	//For missimg always losing situation
-	uint16_t chaos = 0; //Quantity of chaos in field
-	for (size_t row = 0; row < size_y; row++)
-	{
-		for (size_t col = 0; col < size_x; col++)
-		{
-			for (size_t i = row; i < size_y; i++)
-			{
-				if ((row == size_y - 1) && (col > size_x - 2))
-					break;
-				for (size_t j = col; j < size_x; j++)
-				{
-					if ((row == size_y - 1) && (j > size_x - 1))
-						break;
-					//to avoid looping in the case of the last empty cell 
-					if (result_field->barley[row][col] > result_field->barley[i][j])
-						chaos++;
-				}
-			}
-		}
-	}
-
-	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
-	{
-		int16_t tmp = result_field->barley[size_y - 1][size_x - 3];
-		result_field->barley[size_y - 1][size_x - 3] = result_field->barley[size_y - 1][size_x - 2];
-		result_field->barley[size_y - 1][size_x - 2] = tmp;
-	}
 
 	return result_field;
 }
@@ -118,6 +92,37 @@ void free_field
     
     free(field->barley);
     free(field);
+}
+
+bool check_chaos
+    (barley_field_t * restrict field)
+{
+	//For missimg always losing situation
+	uint16_t chaos = 0; //Quantity of chaos in field
+	for (size_t row = 0; row < field->size_y; row++)
+	{
+		for (size_t col = 0; col < field->size_x; col++)
+		{
+			for (size_t i = row; i < field->size_y; i++)
+			{
+				for (size_t j = col; j < field->size_x; j++)
+				{
+					if ((i == field->size_y - 1) && (j == field->size_x - 1))
+						break;
+					//to avoid looping in the case of the last empty cell 
+					if (field->barley[row][col] > field->barley[i][j])
+						chaos++;
+				}
+				if ((row == field->size_y - 1) && (col > field->size_x - 2))
+					break;
+			}
+		}
+	}
+
+	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
+		return 1;
+
+	return 0;
 }
 
 void print_field

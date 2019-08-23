@@ -27,6 +27,9 @@ barley_field_t* init_field
 void free_field
     (barley_field_t * restrict field);
 
+bool check_chaos
+    (barley_field_t * restrict field);
+
 void print_field
 	(const barley_field_t * restrict field);
 
