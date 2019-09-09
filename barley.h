@@ -15,6 +15,8 @@ typedef struct
 	int16_t ** restrict barley;
 	size_t size_x, position_x;
 	size_t size_y, position_y;
+
+    uint16_t chaos;
 } __attribute__((packed)) barley_field_t;
 
 //---------------Functions-----------------
@@ -28,6 +30,9 @@ void free_field
     (barley_field_t * restrict field);
 
 bool check_chaos
+    (barley_field_t * restrict field);
+
+bool check_chaos2
     (barley_field_t * restrict field);
 
 void print_field

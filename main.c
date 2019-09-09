@@ -57,6 +57,8 @@ int main(void)
 
 		printw("\nQuantity of moves: %d\n", move_counter);
 
+		printw("CHAOS: %d", field->chaos);
+
 		control = getch();
 
 		if (control == EXIT)

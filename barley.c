@@ -71,7 +71,7 @@ barley_field_t* init_field
 					break;
 			}
 		}
-	} while(check_chaos(result_field));
+	} while(check_chaos2(result_field));
 
 	//Init first position
 	result_field->position_x = size_x - 1;
@@ -113,16 +113,49 @@ bool check_chaos
 					if (field->barley[row][col] > field->barley[i][j])
 						chaos++;
 				}
-				if ((row == field->size_y - 1) && (col > field->size_x - 2))
-					break;
 			}
+			if ((row == field->size_y - 1) && (col > field->size_x - 1))
+				break;
 		}
 	}
 
-	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
-		return 1;
+	field->chaos = chaos;
 
-	return 0;
+	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
+		return true;
+
+	return false;
+}
+
+bool check_chaos2
+    (barley_field_t * restrict field)
+{
+	size_t row = field->size_y;
+	size_t col = field->size_x;
+
+	uint16_t *probe = (uint16_t*)malloc(sizeof(uint16_t) * (row * col));
+
+	for (size_t i = 0, k = 0; i < row; i++)
+		for (size_t j = 0; j < col; j++, k++)
+			probe[k] = field->barley[i][j];
+
+	uint16_t chaos = 0; 
+	uint16_t current_num;
+
+	for (size_t i = 0; i < row * col - 2; i++)
+	{
+		current_num = probe[i];
+		for (size_t j = i + 1; j < row * col - 1; j++)
+			if (current_num > probe[j])
+				chaos++;
+	}
+
+	field->chaos = chaos;
+
+	if (chaos % 2 == 1) //If total amount is odd, then we swap 14 and 15 position (���� ����� ���������� ����� ��������, ����� ������ ������� �������-2 � �������-1 �������)
+		return true;
+
+	return false;
 }
 
 void print_field
