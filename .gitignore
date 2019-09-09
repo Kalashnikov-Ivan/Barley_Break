@@ -1,10 +1,24 @@
-# игнорировать все файлы в каталогах /
-pro/
+
+
+#Linux
+# Ignoring all files in catalogs:
 .vscode/
 
-# Ignoring all obj files in all catalogsсистемные требования
+# Ignoring all files in all catalogs
 **/*.o
+Makefile_debug
+
 # Ignoring all executable files in all catalogs
 **/*.x
 **/*.elf
 **/*.code-workspace
+
+#Windows
+# Ignoring all files in catalogs:
+.vs/
+Windows/src/Debug/
+Windows/src/Release/
+Windows/src/Barley_Break/Debug
+Windows/src/Barley_Break/Release
+# Ignoring all files in all catalogs
+*.vcxproj*

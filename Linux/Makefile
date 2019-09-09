@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-c -Wall -std=c99 -O0 -g3 -lncurses
+CFLAGS=-c -Wall -std=c99 -O3 -lncurses
 
 all : barleyBreak.elf
 
