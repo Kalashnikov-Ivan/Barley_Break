@@ -16,7 +16,6 @@ typedef struct
 	size_t size_x, position_x;
 	size_t size_y, position_y;
 
-    uint16_t chaos;
 } __attribute__((packed)) barley_field_t;
 
 //---------------Functions-----------------
@@ -35,9 +34,6 @@ bool check_chaos
 bool check_chaos2
     (barley_field_t * restrict field);
 
-void print_field
-	(const barley_field_t * restrict field);
-
 bool barley_move
     (barley_field_t * restrict field,
      const KEYBOARD dir);
@@ -50,6 +46,9 @@ int32_t get_rand_in_range
     (const int32_t min, 
      const int32_t max);
 
+void print_field
+	(const barley_field_t * restrict field);
+    
 void print_welcome();
 void print_instruction();
 void print_win

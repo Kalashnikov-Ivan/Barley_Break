@@ -119,9 +119,7 @@ bool check_chaos
 		}
 	}
 
-	field->chaos = chaos;
-
-	if (chaos % 2 == 1) //If total amount is odd, swap 14 and 15 position (4x4)
+	if (chaos % 2 == 1) //if total chaos is odd
 		return true;
 
 	return false;
@@ -150,48 +148,10 @@ bool check_chaos2
 				chaos++;
 	}
 
-	field->chaos = chaos;
-
-	if (chaos % 2 == 1) //If total amount is odd, then we swap 14 and 15 position (���� ����� ���������� ����� ��������, ����� ������ ������� �������-2 � �������-1 �������)
+	if (chaos % 2 == 1) //if total chaos is odd
 		return true;
 
 	return false;
-}
-
-void print_field
-	(const barley_field_t * restrict field)
-{
-	for (size_t row = 0; row < field->size_y; row++)
-	{
-		for (size_t col = 0; col < field->size_x; col++) //Print top of cell
-		{
-			if (field->barley[row][col] == 0)
-				printw("      ");
-			else
-				printw(" ---  ");
-		}
-		printw("\n");
-
-		for (size_t col = 0; col < field->size_x; col++) //Print middle of cell
-		{
-			if (field->barley[row][col] == 0)
-				printw("      ");
-			else
-				printw("| %-2d| ", field->barley[row][col]);
-		}
-		printw("\n");
-
-		for (size_t col = 0; col < field->size_x; col++) //Print bottom of cell
-		{
-			if (field->barley[row][col] == 0)
-				printw("      ");
-			else
-				printw(" ---  ");
-		}
-		printw("\n");
-
-		refresh();
-	}
 }
 
 bool barley_move
@@ -265,6 +225,42 @@ int32_t get_rand_in_range
      const int32_t max)
 {
    return (min + rand() % (min - (max + 1)));
+}
+
+void print_field
+	(const barley_field_t * restrict field)
+{
+	for (size_t row = 0; row < field->size_y; row++)
+	{
+		for (size_t col = 0; col < field->size_x; col++) //Print top of cell
+		{
+			if (field->barley[row][col] == 0)
+				printw("      ");
+			else
+				printw(" ---  ");
+		}
+		printw("\n");
+
+		for (size_t col = 0; col < field->size_x; col++) //Print middle of cell
+		{
+			if (field->barley[row][col] == 0)
+				printw("      ");
+			else
+				printw("| %-2d| ", field->barley[row][col]);
+		}
+		printw("\n");
+
+		for (size_t col = 0; col < field->size_x; col++) //Print bottom of cell
+		{
+			if (field->barley[row][col] == 0)
+				printw("      ");
+			else
+				printw(" ---  ");
+		}
+		printw("\n");
+
+		refresh();
+	}
 }
 
 void print_welcome()
