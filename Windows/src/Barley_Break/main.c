@@ -13,7 +13,10 @@ int main(void)
 	print_welcome();
 
 	printf("Enter any key to start...");
-	_getch();
+	KEYBOARD control = _getch();
+
+	if (control == EXIT)
+		return 0;
 
 	bool correct_input = false;
 	while (!correct_input)
@@ -28,18 +31,18 @@ int main(void)
 		else
 			correct_input = true;
 	}
-	
-	barley_field_t * field = init_field(size_y, size_x);
-	if (NULL == field)
-		return 1;
 
-	while (check_win(field))
-        field = init_field(size_y, size_x);
-
-	KEYBOARD control;
-	bool new_game = false;
+	bool new_game;
 	do
 	{
+		new_game = false;
+		barley_field_t * field = init_field(size_y, size_x);
+		if (NULL == field)
+			return 1;
+
+		while (check_win(field))
+			field = init_field(size_y, size_x);
+
 		uint32_t move_counter = 0;
 
 		while (!check_win(field))
@@ -88,16 +91,15 @@ int main(void)
 		if (control != EXIT)
 		{
 			char answer = 0;
-			while (answer != 'y' || answer != 'n')
+			while (answer != 'y' && answer != 'n')
 			{
 				printf("Do you want play again? (y/n)");
 				answer = _getch();
 			}
 		}
 
-	} while (!new_game);
-
-	free_field(field);
+		free_field(field);
+	} while (new_game);
 
 	return 0;
 }

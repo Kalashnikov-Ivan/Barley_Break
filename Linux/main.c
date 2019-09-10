@@ -14,10 +14,16 @@ int main(void)
 
 	print_welcome();
 
-	printw("Enter any key to start...");
-	getch();
+	printw("Enter any key to start... or 'q' for exit");
+	KEYBOARD control = getch();
 
 	erase();
+
+	if (control == EXIT)
+	{
+		endwin();	
+		return 0;
+	}
 
 	bool correct_input = false;
 	while (!correct_input)
@@ -38,59 +44,78 @@ int main(void)
 	keypad (stdscr, TRUE);
 	noecho();
 
-	barley_field_t * restrict field = init_field(size_y, size_x);
-	if (NULL == field)
-		return 1;
-
-	while (check_win(field))
-        field = init_field(size_y, size_x);
-
-	KEYBOARD control;
-	uint32_t move_counter = 0;
-
-	while (!check_win(field))
+	bool new_game;
+	do
 	{
-		erase();
-		print_field(field);
+		new_game = false;
+		barley_field_t * restrict field = init_field(size_y, size_x);
+		if (NULL == field)
+			return 1;
 
-		print_instruction();
-
-		printw("\nQuantity of moves: %d\n", move_counter);
-
-		control = getch();
-
-		if (control == EXIT)
-			break;
-
-		if (control == RESTART)
-		{
+		while (check_win(field))
 			field = init_field(size_y, size_x);
 
-			while (check_win(field))
+		uint32_t move_counter = 0;
+
+		while (!check_win(field))
+		{
+			erase();
+			print_field(field);
+
+			print_instruction();
+
+			printw("\nQuantity of moves: %d\n", move_counter);
+
+			control = getch();
+
+			if (control == EXIT)
+				break;
+
+			if (control == RESTART)
+			{
 				field = init_field(size_y, size_x);
 
-			move_counter = 0;
-			continue;
+				while (check_win(field))
+					field = init_field(size_y, size_x);
+
+				move_counter = 0;
+				continue;
+			}
+
+			if (barley_move(field, control))
+				move_counter++;
 		}
 
-		if (barley_move(field, control))
-			move_counter++;
-	}
+		if (check_win(field))
+		{
+			erase();
+			print_field(field);
 
-	if (check_win(field))
-	{
-		erase();
-		print_field(field);
+			print_win(move_counter);
+			printw("\nEnter any key to continue...");
 
-		print_win(move_counter);
-		printw("\nEnter any key to continue...");
+			getch();
+		}
 
-		getch();
-	}
+		if (control != EXIT)
+		{
+			char answer = 0;
+			while (answer != 'y' && answer != 'n')
+			{
+				printw("\nDo you want play again? (y/n)");
+				answer = getch();
+			}
+
+			if (answer == 'y')
+				new_game = true;
+			else
+				new_game = false;
+		}
+
+		free_field(field);
+	} while (new_game);
 
 	endwin();
-
-	free_field(field);
 
 	return 0;
 }
