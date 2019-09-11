@@ -8,7 +8,7 @@
 
 int main(void) 
 {
-	size_t size_y = 4, size_x = 4;
+	size_t size_y, size_x;
 
 	print_welcome();
 
