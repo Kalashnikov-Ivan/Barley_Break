@@ -20,7 +20,7 @@ This is consolas game for Linux and Windows.
        </li>
        <li> Use<code>make</code>that to build executable file.
        </li>
-       <li> Before<code>make</code>you get a <code>barleyBreak.elf</code>. Run him and enjoy!
+       <li> After<code>make</code>you get a <code>barleyBreak.elf</code>. Run it and enjoy!
           <br><code>./barleyBreak.elf</code>
        </li>
     </ol>
